@@ -6,17 +6,20 @@ let elasticClient;
 const getDBConnections = () => {
   if (!elasticClient) {
     elasticClient = new Client({
-      cloud: {
-        id: process.env.CLOUDID,
-      },
-      auth: {
-        username: process.env.DBUSER,
-        password: process.env.DBPASSWORD,
-      },
+      // node: "http://localhost:9200",
+      node: "http://127.0.0.1:9200",
+      // cloud: {
+      //   id: process.env.CLOUDID,
+      // },
+      // auth: {
+      //   username: process.env.DBUSER,
+      //   password: process.env.DBPASSWORD,
+      // },
+      // node: "https://b1bae38299f74a25b80a609057bc38f1.us-central1.gcp.cloud.es.io:443",
       // auth: { apiKey: "WWp1czE1TUJaUmx0NUJnY3pFRkQ6T2oxbTV2cEFSOFdFcjJManhjbnpDZw==" },
-      maxRetries: 5,
-      requestTimeout: 30000,
-      sniffOnStart: true,
+      // maxRetries: 5,
+      // requestTimeout: 60000,
+      // sniffOnStart: true,
     });
 
     elasticClient

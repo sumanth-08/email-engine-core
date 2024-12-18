@@ -1,27 +1,24 @@
-import { Router } from "express";
+import { query, Router } from "express";
 import { send } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
 import userIndex from "../models/userIndex.js";
 import getDBConnections from "../helper/dbConnection.js";
 const router = Router();
 
-export default router.post("/", async (req, res) => {
+export default router.get("/", async (req, res) => {
   try {
-    const { user_id, email } = req.body;
     const elasticClient = getDBConnections();
 
-    await elasticClient.index({
+    let data = await elasticClient.search({
       index: userIndex.index,
-      document: {
-        user_id: user_id,
-        email_addy: email,
+      query: {
+        match_all: {},
       },
     });
 
-    return send(res, RESPONSE.SUCCESS);
+    return send(res, RESPONSE.SUCCESS, data.hits);
   } catch (err) {
-    console.log(err.message);
-    
+    console.log(err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

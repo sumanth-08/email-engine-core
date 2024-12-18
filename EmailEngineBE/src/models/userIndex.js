@@ -3,8 +3,8 @@ const userIndex = {
   body: {
     mapping: {
       properties: {
-        user_id: { type: "keyword" },
-        email_aady: { type: "keyword" },
+        user_id: { type: "text" },
+        email_addy: { type: "text" },
       },
     },
   },
