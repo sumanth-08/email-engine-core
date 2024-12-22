@@ -7,7 +7,7 @@ const router = Router();
 export default router.get("/", async (req, res) => {
   try {
     const authCodeUrlParameters = {
-      scopes: ["Mail.read"],
+      scopes: ['Mail.Read', 'User.Read'],
       redirectUri: "http://localhost:3000/redirect",
     };
 
