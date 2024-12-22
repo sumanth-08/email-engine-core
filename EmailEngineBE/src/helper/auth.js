@@ -3,7 +3,7 @@ import * as msal from "@azure/msal-node";
 const msalConfig = {
   auth: {
     clientId: process.env.CLIENT_ID,
-    authority: process.env.AAD_ENDPOINT + "/" + process.env.TENANT_ID + "/v2.0",
+    authority: process.env.AAD_ENDPOINT + "/common"
     // clientSecret: process.env.CLIENT_SECRET,
   },
 };
