@@ -3,7 +3,7 @@ import { Client } from "@elastic/elasticsearch";
 let elasticClient;
 // console.log(process.env.CLOUDID);
 
-const getDBConnections = () => {
+const getDBConnections = async() => {
   if (!elasticClient) {
     elasticClient = new Client({
       // node: "http://localhost:9200",

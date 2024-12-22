@@ -2,6 +2,7 @@ import { Router } from "express";
 import { send } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
 import axios from "axios";
+import getDBConnections from "../helper/dbConnection.js";
 const router = Router();
 
 export default router.get("/", async (req, res) => {
@@ -36,6 +37,15 @@ export default router.get("/", async (req, res) => {
         from: itm.from,
         toRecipients: itm.toRecipients,
       };
+    });
+
+    const elasticClient = getDBConnections();
+
+    await elasticClient.index({
+      index: "usermails",
+      document: {
+        data,
+      },
     });
 
     return send(res, RESPONSE.SUCCESS, data);

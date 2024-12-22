@@ -11,4 +11,8 @@ export const RESPONSE = {
     code: 201,
     message: "is required",
   },
+  INVALID: {
+    code: 202,
+    message: "is invalid input format",
+  },
 };

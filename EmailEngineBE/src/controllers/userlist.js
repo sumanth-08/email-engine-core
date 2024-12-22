@@ -7,10 +7,10 @@ const router = Router();
 
 export default router.get("/", async (req, res) => {
   try {
-    const elasticClient = getDBConnections();
+    const elasticClient = await getDBConnections();
 
     let data = await elasticClient.search({
-      index: userIndex.index,
+      index: "users",
       query: {
         match_all: {},
       },
