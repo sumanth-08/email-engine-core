@@ -1,52 +1,46 @@
 import { Router } from "express";
 import { send } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
-import emailAuth from "../helper/auth.js";
 import axios from "axios";
-import pca from "../helper/auth.js";
 const router = Router();
 
 export default router.get("/", async (req, res) => {
   try {
-    // const { email } = req.body;
-    // const token = await emailAuth.getToken(emailAuth.tokenRequest);
-    // // console.log(token);
+    const token = req.headers.authorization.split(" ")[1];
 
-    // const url = `${emailAuth.apiConfig.uri}/me/messages`;
-
-    // // console.log(url);
-    // // console.log(token.accessToken);
-
-    // let data = await fetch(url, {
-    //   method: "GET",
-    //   headers: {
-    //     Authorization: `Bearer ${token.accessToken}`,
-    //   },
-    // });
-
-    // data = await data.json();
-    // console.log(data);
-
-    const auth = await pca.acquireTokenByAuthorizationCode({
-      scopes: ["Mail.Read"],
-      redirectUri: "http://localhost:3000/redirect",
-      code: req.query.code,
-    });
-
-    const userId = "sumanths2333@outlook.com";
-
-    let data = await fetch(`https://graph.microsoft.com/v1.0/me/messages`, {
+    let config = {
       method: "GET",
+      maxBodyLength: Infinity,
+      url: process.env.GRAPH_ENDPOINT,
       headers: {
-        Authorization: `Bearer ${auth.accessToken}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    });
-    console.log(await data.json());
+    };
 
-    return send(res, RESPONSE.SUCCESS, auth);
+    let { data } = await axios.request(config);
+
+    data = data.value.map((itm) => {
+      return {
+        id: itm.id,
+        createdDateTime: itm.createdDateTime,
+        receivedDateTime: itm.receivedDateTime,
+        sentDateTime: itm.sentDateTime,
+        hasAttachments: itm.hasAttachments,
+        subject: itm.subject,
+        bodyPreview: itm.bodyPreview,
+        importance: itm.importance,
+        isRead: itm.isRead,
+        isDraft: itm.isDraft,
+        body: itm.body,
+        sender: itm.sender,
+        from: itm.from,
+        toRecipients: itm.toRecipients,
+      };
+    });
+
+    return send(res, RESPONSE.SUCCESS, data);
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });
