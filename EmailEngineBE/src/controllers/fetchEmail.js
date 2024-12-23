@@ -39,7 +39,7 @@ export default router.get("/", async (req, res) => {
       };
     });
 
-    const elasticClient = getDBConnections();
+    const elasticClient = await getDBConnections();
 
     await elasticClient.index({
       index: "usermails",

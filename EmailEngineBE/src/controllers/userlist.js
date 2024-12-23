@@ -10,7 +10,7 @@ export default router.get("/", async (req, res) => {
     const elasticClient = await getDBConnections();
 
     let data = await elasticClient.search({
-      index: "users",
+      index: "usermails",
       query: {
         match_all: {},
       },
