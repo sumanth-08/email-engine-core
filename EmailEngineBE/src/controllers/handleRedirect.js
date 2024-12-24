@@ -20,7 +20,7 @@ export default router.get("/", async (req, res) => {
 
     const data = await pca.acquireTokenByCode(tokenRequest);
     console.log(data);
-    console.log(data.refreshToken);
+    console.log(data.refreshOn);
 
     // await saveToken(data.account.homeAccountId, {
     //   accessToken: data.accessToken,

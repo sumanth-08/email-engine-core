@@ -9,6 +9,7 @@ export default router.get("/", async (req, res) => {
     const authCodeUrlParameters = {
       scopes: ["Mail.Read", "User.Read", "offline_access"],
       redirectUri: "http://localhost:3000/redirect",
+      prompt: "login",
     };
 
     const response = await pca.getAuthCodeUrl(authCodeUrlParameters);

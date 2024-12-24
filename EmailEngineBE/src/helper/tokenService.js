@@ -34,7 +34,7 @@ const saveUserToken = async (userId, token) => {
 //
 const refreshToken = async (userId) => {
   try {
-    const TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+    const TOKEN_URL = process.env.AAD_ENDPOINT + "/common/oauth2/v2.0/token";
     const tokenData = await getToken(userId);
     if (!tokenData || !tokenData.refreshToken) {
       return send(res, setErrorResponseMsg(RESPONSE.NOT_FOUND, "Refresh Token"));
@@ -54,7 +54,7 @@ const refreshToken = async (userId) => {
 
     const { access_token, refresh_token, expires_in } = response.data;
 
-    await saveToken(userId, {
+    await saveUserToken(userId, {
       accessToken: access_token,
       refreshToken: refresh_token || tokenData.refreshToken,
       tokenExpiry: new Date(Date.now() + expires_in * 1000).toISOString(),
