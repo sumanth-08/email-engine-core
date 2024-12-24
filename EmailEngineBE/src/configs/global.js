@@ -15,4 +15,8 @@ export const RESPONSE = {
     code: 202,
     message: "is invalid input format",
   },
+  NOT_FOUND: {
+    code: 203,
+    message: "is not found",
+  },
 };

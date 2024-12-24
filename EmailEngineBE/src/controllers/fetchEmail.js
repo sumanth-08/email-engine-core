@@ -41,12 +41,15 @@ export default router.get("/", async (req, res) => {
 
     const elasticClient = await getDBConnections();
 
-    await elasticClient.index({
-      index: "usermails",
-      document: {
-        data,
-      },
-    });
+    for (const ele of data) {      
+      await elasticClient.index({
+        index: "usermails",
+        document: {
+          id: ele.id,
+          data,
+        },
+      });
+    }
 
     return send(res, RESPONSE.SUCCESS, data);
   } catch (err) {

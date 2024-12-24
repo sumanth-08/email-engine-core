@@ -14,11 +14,20 @@ export default router.get("/", async (req, res) => {
 
     const tokenRequest = {
       code: code,
-      scopes: ["Mail.Read", "User.Read"],
+      scopes: ["Mail.Read", "User.Read", "offline_access"],
       redirectUri: "http://localhost:3000/redirect",
     };
 
     const data = await pca.acquireTokenByCode(tokenRequest);
+    console.log(data);
+    console.log(data.refreshToken);
+
+    // await saveToken(data.account.homeAccountId, {
+    //   accessToken: data.accessToken,
+    //   refreshToken: data.refreshToken,
+    //   tokenExpiry: new Date(Date.now() + data.expiresOn * 1000).toISOString(),
+    // });
+
     return send(res, RESPONSE.SUCCESS, data);
   } catch (err) {+
     console.log(err);
