@@ -1,4 +1,5 @@
 import * as msal from "@azure/msal-node";
+import cachePlugin from "./cachePlugin.js";
 
 const msalConfig = {
   auth: {
@@ -6,6 +7,9 @@ const msalConfig = {
     authority: process.env.AAD_ENDPOINT + "/common",
     // clientSecret: process.env.CLIENT_SECRET,
     // redirectUri: "http://localhost:3000/redirect",
+  },
+  cache: {
+    cachePlugin,
   },
 };
 

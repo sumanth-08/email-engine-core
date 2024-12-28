@@ -3,21 +3,35 @@ import { send } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
 import axios from "axios";
 import getDBConnections from "../helper/dbConnection.js";
-import { getToken, refreshAccessToken } from "../helper/tokenService.js";
+// import { getToken, refreshAccessToken } from "../helper/tokenService.js";
 import pca from "../helper/auth.js";
 const router = Router();
 
 export default router.get("/", async (req, res) => {
   try {
-    // const token = req.headers.authorization.split(" ")[1];
-    const userId = req.query.user_id;
-    let token = await getToken(userId);
+    let token = req.headers.authorization.split(" ")[1];
+    // const userId = req.query.user_id;
+    // let token = await getToken(userId);
 
-    if (new Date(token.tokenExpiry) < new Date()) {
-      console.log("Token expired, refreshing...");
-      token = await refreshAccessToken(userId);
+    // if (new Date(token.tokenExpiry) < new Date()) {
+    //   console.log("Token expired, refreshing...");
+    //   token = await refreshAccessToken(userId);
+    // }
+
+    const account = await pca.getAllAccounts();
+    // console.log("acc", account);
+
+    if (account.length > 0) {
+      const firstAccount = account[0];
+      let ats = await pca.acquireTokenSilent({
+        account: firstAccount,
+        scopes: ["User.Read", "Mail.Read"],
+      });
+      // console.log(ats.accessToken);
+      token = ats.accessToken;
     }
-    
+
+    // console.log(token);
 
     let config = {
       method: "GET",
@@ -51,7 +65,7 @@ export default router.get("/", async (req, res) => {
 
     // const elasticClient = await getDBConnections();
 
-    // for (const ele of data) {      
+    // for (const ele of data) {
     //   await elasticClient.index({
     //     index: "usermails",
     //     document: {
