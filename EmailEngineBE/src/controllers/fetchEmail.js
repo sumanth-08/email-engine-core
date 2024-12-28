@@ -9,7 +9,7 @@ const router = Router();
 
 export default router.get("/", async (req, res) => {
   try {
-    let token = req.headers.authorization.split(" ")[1];
+    let token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
     // const userId = req.query.user_id;
     // let token = await getToken(userId);
 
@@ -44,36 +44,6 @@ export default router.get("/", async (req, res) => {
 
     let { data } = await axios.request(config);
 
-    // data = data.value.map((itm) => {
-    //   return {
-    //     id: itm.id,
-    //     createdDateTime: itm.createdDateTime,
-    //     receivedDateTime: itm.receivedDateTime,
-    //     sentDateTime: itm.sentDateTime,
-    //     hasAttachments: itm.hasAttachments,
-    //     subject: itm.subject,
-    //     bodyPreview: itm.bodyPreview,
-    //     importance: itm.importance,
-    //     isRead: itm.isRead,
-    //     isDraft: itm.isDraft,
-    //     body: itm.body,
-    //     sender: itm.sender,
-    //     from: itm.from,
-    //     toRecipients: itm.toRecipients,
-    //   };
-    // });
-
-    // const elasticClient = await getDBConnections();
-
-    // for (const ele of data) {
-    //   await elasticClient.index({
-    //     index: "usermails",
-    //     document: {
-    //       id: ele.id,
-    //       data,
-    //     },
-    //   });
-    // }
 
     return send(res, RESPONSE.SUCCESS, data);
   } catch (err) {

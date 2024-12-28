@@ -22,5 +22,13 @@ export const RESPONSE = {
   ALREADY_EXISTS: {
     code: 204,
     message: "is already exists"
-  }
+  },
+  TOKEN_REQUIRED: {
+    code: 400,
+    message: "Authentication token is required",
+  },
+  INVALID_TOKEN: {
+    code: 401,
+    message: "Authentication token is invalid",
+  },
 };
