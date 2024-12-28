@@ -7,10 +7,6 @@ const msalConfig = {
     // clientSecret: process.env.CLIENT_SECRET,
     // redirectUri: "http://localhost:3000/redirect",
   },
-  cache: {
-    // cacheLocation: "sessionStorage", // Adjust based on your needs
-    // storeAuthStateInCookie: false,
-  },
 };
 
 const pca = new msal.PublicClientApplication(msalConfig);

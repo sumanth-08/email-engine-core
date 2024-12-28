@@ -1,85 +1,84 @@
-import getDBConnections from "./dbConnection";
-import { send, setErrorResponseMsg } from "./responseHelper.js";
-import { RESPONSE } from "../configs/global.js";
+import axios from "axios";
+import qs from "qs";
+import getDBConnections from "./dbConnection.js";
+import pca from "./auth.js";
 
-const tokenXpired = (expireTime) => {
-  return new Date(expireTime) <= new Date();
+export const getRefreshToken = async (code) => {
+  try {
+    let data = qs.stringify({
+      grant_type: "authorization_code",
+      code: code,
+      client_id: process.env.CLIENT_ID,
+      redirect_uri: process.env.REDIRECT_URL,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: process.env.REFRESH_TOKEN_ENDPOINT,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: data,
+    };
+
+    let res = await axios.request(config);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const getUserToken = async (userId) => {
-  const es = await getDBConnections();
+export const getToken = async (userId) => {
+  const elasticClient = await getDBConnections();
 
-  const data = await es.search({
-    index: "users",
-    query: { match: { userId } },
+  const data = await elasticClient.search({
+    index: "usertokens",
+    query: {
+      match: { userid: userId },
+    },
   });
-  if (data.hits.total.value === 0) return null;
+
   return data.hits.hits[0]._source;
 };
 
-const saveUserToken = async (userId, token) => {
-  const es = await getDBConnections();
-  await es.index({
-    index: "users",
-    id: userId,
-    document: {
-      userId,
-      accessToken: token.accessToken,
-      refreshToken: token.refreshToken,
-      tokenExpiry: token.tokenExpiry,
-    },
-  });
-};
 
-//
-const refreshToken = async (userId) => {
+export const refreshAccessToken = async (userId) => {
   try {
-    const TOKEN_URL = process.env.AAD_ENDPOINT + "/common/oauth2/v2.0/token";
+    const elasticClient = await getDBConnections();
+
     const tokenData = await getToken(userId);
-    if (!tokenData || !tokenData.refreshToken) {
-      return send(res, setErrorResponseMsg(RESPONSE.NOT_FOUND, "Refresh Token"));
-    }
 
-    const data = qs.stringify({
-      client_id: process.env.CLIENT_ID,
-      client_secret: process.env.CLIENT_SECRET,
-      grant_type: "refresh_token",
-      refresh_token: tokenData.refreshToken,
-      scope: "https://graph.microsoft.com/.default",
+    const tokenRequest = {
+      refreshToken: tokenData.refreshToken,
+      scopes: ["Mail.Read", "User.Read", "offline_access"],
+    };
+
+    const newTokenData = await pca.acquireTokenByRefreshToken(tokenRequest);
+
+    await elasticClient.updateByQuery({
+      index: "usertokens",
+      query: {
+        match: { userid: userId }
+      },
+      script: {
+        source: `
+          ctx._source.accessToken = params.accessToken;
+          ctx._source.refreshToken = params.refreshToken;
+          ctx._source.tokenExpiry = params.tokenExpiry;
+        `,
+        params: {
+          accessToken: newTokenData.accessToken,
+          refreshToken: newTokenData.refreshToken || tokenData.refreshToken,
+          tokenExpiry: new Date(Date.now() + newTokenData.expiresOn * 1000).toISOString(),
+        },
+      },
     });
 
-    const response = await axios.post(TOKEN_URL, data, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-
-    const { access_token, refresh_token, expires_in } = response.data;
-
-    await saveUserToken(userId, {
-      accessToken: access_token,
-      refreshToken: refresh_token || tokenData.refreshToken,
-      tokenExpiry: new Date(Date.now() + expires_in * 1000).toISOString(),
-    });
-
-    console.log(access_token);
-    return access_token;
+    console.log("Token refreshed successfully");
+    return newTokenData.accessToken;
   } catch (err) {
-    return send(res, RESPONSE.UNKNOWN_ERROR);
+    console.error("Error refreshing token:", err);
+    throw err;
   }
 };
-
-//
-
-const validateToken = async (userId) => {
-  const tokenData = await getUserToken(userId);
-  if (!tokenData) {
-    return send(res, setErrorResponseMsg(RESPONSE.NOT_FOUND, "User token"));
-  }
-
-  if (tokenXpired(tokenData.tokenExpiry)) {
-    return await refreshToken(userId);
-  }
-
-  return tokenData.accessToken;
-};
-
-export { validateToken, refreshToken, getUserToken, saveUserToken };

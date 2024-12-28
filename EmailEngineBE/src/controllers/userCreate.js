@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { query, Router } from "express";
 import { send, setErrorResponseMsg } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
 import getDBConnections from "../helper/dbConnection.js";
@@ -24,12 +24,26 @@ export default router.post("/", async (req, res) => {
       return send(res, setErrorResponseMsg(RESPONSE.INVALID, "Password"));
     }
 
+    const isIndexExists = await elasticClient.indices.exists({ index: "users" });
+    if (isIndexExists) {
+      const emailAlreadyExists = await elasticClient.count({
+        index: "users",
+        query: {
+          term: { "email.keyword": email },
+        },
+      });
+      // console.log(emailAlreadyExists);
+      if (emailAlreadyExists.count > 0) {
+        return send(res, setErrorResponseMsg(RESPONSE.ALREADY_EXISTS, "Email"));
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await elasticClient.index({
       index: "users",
       document: {
-        user_id: user_id,
+        id: user_id,
         name: name,
         email: email,
         password: hashedPassword,

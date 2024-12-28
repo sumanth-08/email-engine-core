@@ -3,11 +3,21 @@ import { send } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
 import axios from "axios";
 import getDBConnections from "../helper/dbConnection.js";
+import { getToken, refreshAccessToken } from "../helper/tokenService.js";
+import pca from "../helper/auth.js";
 const router = Router();
 
 export default router.get("/", async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    // const token = req.headers.authorization.split(" ")[1];
+    const userId = req.query.user_id;
+    let token = await getToken(userId);
+
+    if (new Date(token.tokenExpiry) < new Date()) {
+      console.log("Token expired, refreshing...");
+      token = await refreshAccessToken(userId);
+    }
+    
 
     let config = {
       method: "GET",
@@ -20,40 +30,40 @@ export default router.get("/", async (req, res) => {
 
     let { data } = await axios.request(config);
 
-    data = data.value.map((itm) => {
-      return {
-        id: itm.id,
-        createdDateTime: itm.createdDateTime,
-        receivedDateTime: itm.receivedDateTime,
-        sentDateTime: itm.sentDateTime,
-        hasAttachments: itm.hasAttachments,
-        subject: itm.subject,
-        bodyPreview: itm.bodyPreview,
-        importance: itm.importance,
-        isRead: itm.isRead,
-        isDraft: itm.isDraft,
-        body: itm.body,
-        sender: itm.sender,
-        from: itm.from,
-        toRecipients: itm.toRecipients,
-      };
-    });
+    // data = data.value.map((itm) => {
+    //   return {
+    //     id: itm.id,
+    //     createdDateTime: itm.createdDateTime,
+    //     receivedDateTime: itm.receivedDateTime,
+    //     sentDateTime: itm.sentDateTime,
+    //     hasAttachments: itm.hasAttachments,
+    //     subject: itm.subject,
+    //     bodyPreview: itm.bodyPreview,
+    //     importance: itm.importance,
+    //     isRead: itm.isRead,
+    //     isDraft: itm.isDraft,
+    //     body: itm.body,
+    //     sender: itm.sender,
+    //     from: itm.from,
+    //     toRecipients: itm.toRecipients,
+    //   };
+    // });
 
-    const elasticClient = await getDBConnections();
+    // const elasticClient = await getDBConnections();
 
-    for (const ele of data) {      
-      await elasticClient.index({
-        index: "usermails",
-        document: {
-          id: ele.id,
-          data,
-        },
-      });
-    }
+    // for (const ele of data) {      
+    //   await elasticClient.index({
+    //     index: "usermails",
+    //     document: {
+    //       id: ele.id,
+    //       data,
+    //     },
+    //   });
+    // }
 
     return send(res, RESPONSE.SUCCESS, data);
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
   }
 });

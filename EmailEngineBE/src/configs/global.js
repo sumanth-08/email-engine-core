@@ -19,4 +19,8 @@ export const RESPONSE = {
     code: 203,
     message: "is not found",
   },
+  ALREADY_EXISTS: {
+    code: 204,
+    message: "is already exists"
+  }
 };
