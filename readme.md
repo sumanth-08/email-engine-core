@@ -87,7 +87,7 @@ User to create account with `name`, `email` and `password`.
 
 To check the active Indices 
 ```
-http://localhost:9200/_cat/indices
+curl -X GET "localhost:9200/_cat/indices"
 ```
 
 For more please fnd the postman collection `postman_collection.json` file
