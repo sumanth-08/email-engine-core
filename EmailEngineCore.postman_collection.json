@@ -1,0 +1,276 @@
+{
+	"info": {
+		"_postman_id": "ecf5508e-d601-4f09-ab7f-413e63af739d",
+		"name": "EmailEngineCore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16263146"
+	},
+	"item": [
+		{
+			"name": "User Create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "sam",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "samx@outlook.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Qwerty@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8989/api/create/user/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"create",
+						"user",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "samx@outlook.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Qwerty@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8989/api/user/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"user",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth Login",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8989/api/email/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"email",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth Redirect",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8989/api/email/redirect?code=M.C510_SN1.2.U.0805a538-402d-1fdb-b3f9-61bd77952799",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"email",
+						"redirect"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "M.C510_SN1.2.U.0805a538-402d-1fdb-b3f9-61bd77952799"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Email",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "EwB4A8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAf0OsxIOERhKB5ValiekvP/GQVymo7SieQ4yXEJd7TAcXGqoq1v+RPJsHJZI33xOTkekFqxvjAZm3wO6IwoGEagMBKaYiNgyGVLmUDwaz/p0xKubUggDJZdseHoLI1KAKQer1IZxSapdSSgnL/6uZedAuyS71Vx8rQXsTSDEx439rKaKGyigFzcnbcGWHnuqNmJlAbPMB2VT3Rk9gEatnzKGB2ePdAW9ah5xkI85qoYNA4fYZW4weMMkTJLbB+1cYK88Amt3Gh5XnG/mu3Q0ot1vlmypU0GbmKVttlFYe/pYUhAJVCUJ8CslyGsH9M4K4LjIy6SpvgrvlI/HxXyJVI0QZgAAEKfrHOdi0T0zBjr5z9cwHM5AAqjE6IkSXJY9qZBnDBsuArOINVtZ7LZVlYidHOFpPgLtmLFx/k6a86fp6xArcl8sMEfUVNYrojHXzdOvzOQW4GpOSxHrKRX4P5aUv/YJg3XCMQ9yliKhXE7GpBIGq6MhXn2tg146rfaLM93l/yDCmVVAqZNqhZxyM5JeJL/lGvvV1OnWkgQTin42cv7BJjiYLnDZWs0ZnECAwZ9KRwUO/cfKpnTqsQHxrymxFFOvZEULAYXc+8VIYKD6eVNTPOfOIUYAo9inguNF5+aSdEg+ynvGbLSxwYPGqyb3D8Pp/RYLOYgxvzTAoogmQy6TNbbBgyjqCy/IeVOGn7Ab3mRHlZPXVRkchZxk5AGX746lSawAAn7F6qtQu2X+5FS45+roF26r/5JyK9OoRIRrQD9FndoaAk9mmx0PCs+URMdw9a5+T7TDbyoUeUNiPZ3eph2WcjwUvyiE6k3MQs5r53qd1kVTtP2nagZwGqe4WINIEDKrJ+q5b/nBxpSGqvgSIdhfnnN071sNyc9gxtLF+923hCSGxnzGbTx2U7Xeb6IVE9HaA/t//Zs5AaOMxwNbadn1yHgdOXmR5i6bfTwbaJP4A5fsNgLv2FiwSRRq+xtNA2ZFrqMATwz94NQJw9UXDRAr0+HOS6+dERUC1p/uWezWXDJgPVnqUFd1h8dzGH+KKs/Lr9ds7smbhbvSwYD/67eSAEUZRyJKx2SnzRPCj30TJNxgqn4TMPAT2tghU3vBFjh1iOiBJwZgyKLuYq5LzsLQs4QC",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "access_token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA2M2YxNDhlLWExZmUtNGI5ZC04OTI3LWY1YmQ4ODRjZjQyZSIsIm5hbWUiOiJzYW0iLCJlbWFpbCI6InNhbUBvdXRsb29rLmNvbSIsImlhdCI6MTczNTQ4MTc0OX0.vkk8ptKZa7yKBGKuGx49QLOs_1M7tqbBj3m7qAWvtSY",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8989/api/fetch/email",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"fetch",
+						"email"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mail Messages List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access_token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA2M2YxNDhlLWExZmUtNGI5ZC04OTI3LWY1YmQ4ODRjZjQyZSIsIm5hbWUiOiJzYW0iLCJlbWFpbCI6InNhbUBvdXRsb29rLmNvbSIsImlhdCI6MTczNTQ4MTc0OX0.vkk8ptKZa7yKBGKuGx49QLOs_1M7tqbBj3m7qAWvtSY",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8989/api/user/messages/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"user",
+						"messages",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mail Box  List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "access_token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA2M2YxNDhlLWExZmUtNGI5ZC04OTI3LWY1YmQ4ODRjZjQyZSIsIm5hbWUiOiJzYW0iLCJlbWFpbCI6InNhbUBvdXRsb29rLmNvbSIsImlhdCI6MTczNTQ4MTc0OX0.vkk8ptKZa7yKBGKuGx49QLOs_1M7tqbBj3m7qAWvtSY",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8989/api/user/mailbox/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"api",
+						"user",
+						"mailbox",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "My  Indices",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/_cat/indices",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_cat",
+						"indices"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Elasticsearch Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/_cat/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_cat",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
