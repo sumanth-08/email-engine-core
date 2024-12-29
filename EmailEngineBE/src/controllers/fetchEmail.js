@@ -1,14 +1,17 @@
 import { Router } from "express";
-import { send } from "../helper/responseHelper.js";
+import { send, setErrorResponseMsg } from "../helper/responseHelper.js";
 import { RESPONSE } from "../configs/global.js";
 import axios from "axios";
 import getDBConnections from "../helper/dbConnection.js";
 // import { getToken, refreshAccessToken } from "../helper/tokenService.js";
 import pca from "../helper/auth.js";
+import { authenticate } from "../middlewares/jwtAuth.js";
+import { axiosFeatchUserMailData } from "../helper/axiosUserMails.js";
 const router = Router();
 
-export default router.get("/", async (req, res) => {
+export default router.get("/", authenticate, async (req, res) => {
   try {
+    const elasticClient = await getDBConnections();
     let token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
     // const userId = req.query.user_id;
     // let token = await getToken(userId);
@@ -31,21 +34,62 @@ export default router.get("/", async (req, res) => {
       token = ats.accessToken;
     }
 
+    if (token === null || token === undefined) {
+      return send(res, setErrorResponseMsg(RESPONSE.TOKEN_REQUIRED));
+    }
+
     // console.log(token);
 
-    let config = {
-      method: "GET",
-      maxBodyLength: Infinity,
-      url: process.env.GRAPH_ENDPOINT,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+    /* user email messages */
+    let userMessage = await axiosFeatchUserMailData(process.env.GRAPH_ENDPOINT, token);
 
-    let { data } = await axios.request(config);
+    // console.log(req.user);
+    // console.log(typeof data, data);
 
+    for (const itm of userMessage.value) {
+      await elasticClient.index({
+        index: "usersmails",
+        document: {
+          user_id: req.user.id,
+          id: itm.id,
+          createdDateTime: itm.createdDateTime,
+          receivedDateTime: itm.receivedDateTime,
+          sentDateTime: itm.sentDateTime,
+          hasAttachments: itm.hasAttachments,
+          subject: itm.subject,
+          bodyPreview: itm.bodyPreview,
+          importance: itm.importance,
+          isRead: itm.isRead,
+          isDraft: itm.isDraft,
+          body: itm.body,
+          sender: itm.sender,
+          from: itm.from,
+          toRecipients: itm.toRecipients,
+        },
+      });
+    }
 
-    return send(res, RESPONSE.SUCCESS, data);
+    /* user mailbox */
+    let mailboxData = await axiosFeatchUserMailData(process.env.MAILBOX_GRAPH_ENDPOINT, token);
+    // console.log(mailboxData);
+    for (const itm of mailboxData.value) {
+      await elasticClient.index({
+        index: "usermailbox",
+        document: {
+          user_id: req.user.id,
+          id: itm.id,
+          displayName: itm.displayName,
+          parentFolderId: itm.parentFolderId,
+          childFolderCount: itm.childFolderCount,
+          unreadItemCount: itm.unreadItemCount,
+          totalItemCount: itm.totalItemCount,
+          sizeInBytes: itm.sizeInBytes,
+          isHidden: itm.isHidden,
+        },
+      });
+    }
+
+    return send(res, RESPONSE.SUCCESS);
   } catch (err) {
     console.log(err);
     return send(res, RESPONSE.UNKNOWN_ERROR);

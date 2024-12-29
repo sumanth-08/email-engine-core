@@ -9,9 +9,10 @@ export const authenticate = (req, res, next) => {
     return send(res, RESPONSE.TOKEN_REQUIRED);
   }
   try {
-    const decoded = jwt.verify(token, process.env.TOKENKEY);
+    const decoded = jwt.verify(token, process.env.JWT_TOKENKEY);
     req.user = decoded;
   } catch (err) {
+    // console.log(err.message);
     return send(res, RESPONSE.INVALID_TOKEN);
   }
   return next();

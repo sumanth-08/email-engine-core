@@ -44,7 +44,7 @@ export default router.get("/", async (req, res) => {
     //   },
     // });
 
-    return send(res, RESPONSE.SUCCESS, data);
+    return send(res, RESPONSE.SUCCESS, { accessToken: data.accessToken });
   } catch (err) {
     +console.log(err);
     return send(res, RESPONSE.UNKNOWN_ERROR);
