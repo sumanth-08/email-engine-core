@@ -18,7 +18,7 @@ export default router.get("/", async (req, res) => {
     const tokenRequest = {
       code: code,
       scopes: ["Mail.Read", "User.Read", "offline_access"],
-      redirectUri: "http://localhost:3000/redirect",
+      redirectUri: process.env.REDIRECT_URL,
     };
 
     const data = await pca.acquireTokenByCode(tokenRequest);

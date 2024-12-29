@@ -19,7 +19,7 @@ const cachePlugin = {
       try {
         await fs.writeFile(cacheFilePath, myCache.tokenCache.serialize(), "utf-8");
       } catch (err) {
-        console.error("Failed to write cache to file:", err);
+        console.error(err.message);
       }
     }
   },
